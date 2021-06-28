@@ -51,15 +51,18 @@ export class XFunctions {
     hideDelay?: number,
     append?: boolean
   ): void {
-    return this.vm.$bvToast.toast(content, {
-      title: title,
-      toaster: placement,
-      variant: variant,
-      noCloseButton: hideCloseButton,
-      autoHideDelay: hideDelay ?? 1000,
-      append: append,
-      solid: true,
-    });
+    if (this.vm.$bvToast) {
+      return this.vm.$bvToast.toast(content, {
+        title: title,
+        toaster: placement,
+        variant: variant,
+        noCloseButton: hideCloseButton,
+        autoHideDelay: hideDelay ?? 1000,
+        append: append,
+        solid: true,
+      });
+    }
+    return alert(title + " " + content);
   }
 
   /**
@@ -79,17 +82,20 @@ export class XFunctions {
    * ```
    */
   async confirm(title: string, content: string): Promise<boolean | null> {
-    return await this.vm.$bvModal.msgBoxConfirm(content, {
-      title: title,
-      size: "sm",
-      buttonSize: "sm",
-      okVariant: "danger",
-      okTitle: this.tr("yes"),
-      cancelTitle: this.tr("no"),
-      footerClass: "p-2",
-      hideHeaderClose: false,
-      centered: true,
-    });
+    if (this.vm.$bvModal) {
+      return await this.vm.$bvModal.msgBoxConfirm(content, {
+        title: title,
+        size: "sm",
+        buttonSize: "sm",
+        okVariant: "danger",
+        okTitle: this.tr("yes"),
+        cancelTitle: this.tr("no"),
+        footerClass: "p-2",
+        hideHeaderClose: false,
+        centered: true,
+      });
+    }
+    return confirm(title + " " + content);
   }
   /**
    * Returns true when the confirm box has closed.
@@ -101,14 +107,17 @@ export class XFunctions {
    * @returns boolean
    */
   alert(title: string, content: string): void {
-    return this.vm.$bvModal.msgBoxOk(content, {
-      title: title,
-      size: "sm",
-      buttonSize: "sm",
-      okVariant: "success",
-      headerClass: "p-2 border-bottom-0",
-      footerClass: "p-2 border-top-0",
-    });
+    if (this.vm.$bvModal) {
+      return this.vm.$bvModal.msgBoxOk(content, {
+        title: title,
+        size: "sm",
+        buttonSize: "sm",
+        okVariant: "success",
+        headerClass: "p-2 border-bottom-0",
+        footerClass: "p-2 border-top-0",
+      });
+    }
+    return alert(title + " " + content);
   }
 
   tr(code: string): string {
@@ -122,6 +131,10 @@ export class XFunctions {
 
   open(location: string | { path?: string }): void {
     // console.log(this.vm);
-    return this.vm._router.push(location);
+    if (this.vm._router) {
+      return this.vm._router.push(location);
+    } else {
+      alert("vm.router is not defined");
+    }
   }
 }
