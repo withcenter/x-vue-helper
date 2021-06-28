@@ -121,6 +121,7 @@ export class XFunctions {
   }
 
   open(location: string | { path?: string }): void {
-    return this.vm.router.push(location);
+    // console.log(this.vm);
+    return this.vm._router.push(location);
   }
 }
