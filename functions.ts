@@ -114,7 +114,6 @@ export class XFunctions {
   }
 
   /**
-   * @deprecated
    * @param location
    * @returns
    */
