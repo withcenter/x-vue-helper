@@ -1,7 +1,20 @@
-import store from "@/store";
-import { RawLocation, Route } from "vue-router";
-
 export class XFunctions {
+  private static _instance: XFunctions;
+  public static get instance(): XFunctions {
+    if (!XFunctions._instance) {
+      XFunctions._instance = new XFunctions();
+    }
+    return XFunctions._instance;
+  }
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  vm: any;
+
+  init(vm: any): void {
+    this.vm = vm;
+    console.log("XFunctions::init", this.vm);
+  }
+
   /**
    * Display error alert box
    *
@@ -10,33 +23,13 @@ export class XFunctions {
    * @param code Error code from PHP backend
    * @returns true after the alert dialog closed
    */
-  static error(code: string): void {
+  error(code: string): void {
     if (typeof code === "string" && code.indexOf("error_") === 0) {
       // This is a PHP backend erorr
       return this.alert(this.tr("error"), this.tr(code));
     } else {
       return this.alert(this.tr("error"), "Unknown error: " + code);
     }
-  }
-
-  /**
-   * Returns true when the confirm box has closed.
-   *
-   * Note, use this method from the app.
-   *
-   * @param title title
-   * @param content content
-   * @returns boolean
-   */
-  static alert(title: string, content: string): void {
-    return store.state.vm.$bvModal.msgBoxOk(content, {
-      title: title,
-      size: "sm",
-      buttonSize: "sm",
-      okVariant: "success",
-      headerClass: "p-2 border-bottom-0",
-      footerClass: "p-2 border-top-0",
-    });
   }
 
   /**
@@ -49,7 +42,7 @@ export class XFunctions {
    * @param hideDelay
    * @param append
    */
-  static openToast(
+  openToast(
     title = "title",
     content = "content",
     placement?: string,
@@ -58,9 +51,7 @@ export class XFunctions {
     hideDelay?: number,
     append?: boolean
   ): void {
-    alert(title + content);
-
-    return store.state.vm.$bvToast.toast(content, {
+    return this.vm.$bvToast.toast(content, {
       title: title,
       toaster: placement,
       variant: variant,
@@ -87,11 +78,8 @@ export class XFunctions {
    *  console.log("confirm; ", await this.app.confirm("title", "content"));
    * ```
    */
-  static async confirm(
-    title: string,
-    content: string
-  ): Promise<boolean | null> {
-    return await store.state.vm.$bvModal.msgBoxConfirm(content, {
+  async confirm(title: string, content: string): Promise<boolean | null> {
+    return await this.vm.$bvModal.msgBoxConfirm(content, {
       title: title,
       size: "sm",
       buttonSize: "sm",
@@ -103,8 +91,27 @@ export class XFunctions {
       centered: true,
     });
   }
+  /**
+   * Returns true when the confirm box has closed.
+   *
+   * Note, use this method from the app.
+   *
+   * @param title title
+   * @param content content
+   * @returns boolean
+   */
+  alert(title: string, content: string): void {
+    return this.vm.$bvModal.msgBoxOk(content, {
+      title: title,
+      size: "sm",
+      buttonSize: "sm",
+      okVariant: "success",
+      headerClass: "p-2 border-bottom-0",
+      footerClass: "p-2 border-top-0",
+    });
+  }
 
-  static tr(code: string): string {
+  tr(code: string): string {
     return code;
     // if (!code) return "";
     // if (!apiStore.texts) return code;
@@ -113,13 +120,7 @@ export class XFunctions {
     // return apiStore.texts[code][ApiService.instance.userLanguage];
   }
 
-  /**
-   * @deprecated
-   * @param location
-   * @returns
-   */
-  static open(location: RawLocation): Promise<Route> {
-    // alert("do not use open()");
-    return store.state.router.push(location);
+  open(location: string | { path?: string }): void {
+    return this.vm.router.push(location);
   }
 }
