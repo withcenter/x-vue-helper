@@ -12,7 +12,7 @@ export class XFunctions {
 
   init(vm: any): void {
     this.vm = vm;
-    console.log("XFunctions::init", this.vm);
+    // console.log("XFunctions::init", this.vm);
   }
 
   /**
