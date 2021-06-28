@@ -51,8 +51,6 @@ export class XFunctions {
     hideDelay?: number,
     append?: boolean
   ): void {
-    alert(title + content);
-
     return this.vm.$bvToast.toast(content, {
       title: title,
       toaster: placement,
