@@ -1,4 +1,13 @@
-class XFunctions {
+export class XFunctions {
+  private static _instance: XFunctions;
+  public static get instance(): XFunctions {
+    if (!XFunctions._instance) {
+      XFunctions._instance = new XFunctions();
+    }
+
+    return XFunctions._instance;
+  }
+
   /**
    * Display error alert box
    *
