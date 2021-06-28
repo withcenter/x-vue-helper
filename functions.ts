@@ -119,4 +119,8 @@ export class XFunctions {
     // if (!apiStore.texts[code][ApiService.instance.userLanguage]) return code;
     // return apiStore.texts[code][ApiService.instance.userLanguage];
   }
+
+  open(location: string | { path?: string }): void {
+    return this.vm.router.push(location);
+  }
 }
