@@ -1,3 +1,16 @@
+import router from "@/router";
+import Vue from "vue";
+
+interface ConfirmToast {
+  title: string;
+  message: string;
+  yesCallback: () => void;
+  noCallback: () => void;
+  placement?: string;
+  variant?: string;
+  hideDelay?: number;
+  append?: boolean;
+}
 export class XHelper {
   private static _instance: XHelper;
   public static get instance(): XHelper {
@@ -7,8 +20,9 @@ export class XHelper {
     return XHelper._instance;
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  vm: any;
+  vm: Vue = {} as Vue;
+
+  toastCount = 0;
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   init(options: { vm: any }): void {
@@ -24,7 +38,7 @@ export class XHelper {
    * @param code Error code from PHP backend
    * @returns true after the alert dialog closed
    */
-  error(code: string): void {
+  error(code: string): Promise<void> {
     if (typeof code === "string" && code.indexOf("error_") === 0) {
       // This is a PHP backend erorr
       return this.alert(this.tr("error"), this.tr(code));
@@ -43,27 +57,70 @@ export class XHelper {
    * @param hideDelay
    * @param append
    */
-  openToast(
-    title = "title",
-    content = "content",
+  toast(
+    title: string,
+    content: string,
     placement?: string,
     variant?: string,
     hideCloseButton?: boolean,
     hideDelay?: number,
     append?: boolean
   ): void {
-    if (this.vm.$bvToast) {
-      return this.vm.$bvToast.toast(content, {
-        title: title,
-        toaster: placement,
-        variant: variant,
-        noCloseButton: hideCloseButton,
-        autoHideDelay: hideDelay ?? 1000,
-        append: append,
-        solid: true,
-      });
-    }
-    return alert(title + " " + content);
+    return this.vm.$bvToast.toast(content, {
+      title: title,
+      toaster: placement,
+      variant: variant,
+      noCloseButton: hideCloseButton,
+      autoHideDelay: hideDelay ?? 1000,
+      append: append,
+      solid: true,
+    });
+  }
+
+  confirmToast(options: ConfirmToast): void {
+    // Use a shorter name for `this.$createElement`
+    const h = this.vm.$createElement;
+    // Create a ID with a incremented count
+    const id = `my-toast-${this.toastCount++}`;
+
+    const $content = h("div", {}, [options.message]);
+    const $openButton = h(
+      "b-button",
+      {
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            options.yesCallback();
+          },
+        },
+      },
+      "Open"
+    );
+
+    // Create the custom close button
+    const $closeButton = h(
+      "b-button",
+      {
+        class: "ml-2",
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            options.noCallback();
+          },
+        },
+      },
+      "Close"
+    ); // Create the custom close button
+
+    return this.vm.$bvToast.toast([$content, $openButton, $closeButton], {
+      id: id,
+      title: options.title,
+      toaster: options.placement,
+      variant: options.variant,
+      autoHideDelay: options.hideDelay ?? 1000,
+      append: options.append,
+      solid: true,
+    });
   }
 
   /**
@@ -107,18 +164,15 @@ export class XHelper {
    * @param content content
    * @returns boolean
    */
-  alert(title: string, content: string): void {
-    if (this.vm.$bvModal) {
-      return this.vm.$bvModal.msgBoxOk(content, {
-        title: title,
-        size: "sm",
-        buttonSize: "sm",
-        okVariant: "success",
-        headerClass: "p-2 border-bottom-0",
-        footerClass: "p-2 border-top-0",
-      });
-    }
-    return alert(title + " " + content);
+  alert(title: string, content: string): Promise<void> {
+    return this.vm.$bvModal.msgBoxOk(content, {
+      title: title,
+      size: "sm",
+      buttonSize: "sm",
+      okVariant: "success",
+      headerClass: "p-2 border-bottom-0",
+      footerClass: "p-2 border-top-0",
+    });
   }
 
   tr(code: string): string {
@@ -137,11 +191,6 @@ export class XHelper {
    * @returns void
    */
   open(location: string | { path?: string }): void {
-    // console.log(this.vm);
-    if (this.vm._router) {
-      return this.vm._router.push(location);
-    } else {
-      alert("vm.router is not defined");
-    }
+    router.push(location);
   }
 }
