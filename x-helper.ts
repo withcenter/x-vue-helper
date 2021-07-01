@@ -11,6 +11,27 @@ interface ConfirmToast {
   hideDelay?: number;
   append?: boolean;
 }
+
+export interface Toast {
+  title: string;
+  message: string;
+  clickCallback?: () => void;
+  closeCallback?: () => void;
+  placement?: string;
+  variant?: string;
+  hideDelay?: number;
+  append?: boolean;
+}
+export enum PLACEMENT {
+  TOP_RIGHT = "b-toaster-top-right",
+  TOP_LEFT = "b-toaster-top-left",
+  TOP_CENTER = "b-toaster-top-center",
+  TOP_FULL = "b-toaster-top-full",
+  BOTTOM_RIGHT = "b-toaster-bottom-right",
+  BOTTOM_LEFT = "b-toaster-bottom-left",
+  BOTTOM_CENTER = "b-toaster-bottom-center",
+  BOTTOM_FULL = "b-toaster-bottom-full",
+}
 export class XHelper {
   private static _instance: XHelper;
   public static get instance(): XHelper {
@@ -57,22 +78,51 @@ export class XHelper {
    * @param hideDelay
    * @param append
    */
-  toast(
-    title: string,
-    content: string,
-    placement?: string,
-    variant?: string,
-    hideCloseButton?: boolean,
-    hideDelay?: number,
-    append?: boolean
-  ): void {
-    return this.vm.$bvToast.toast(content, {
-      title: title,
-      toaster: placement,
-      variant: variant,
-      noCloseButton: hideCloseButton,
-      autoHideDelay: hideDelay ?? 1000,
-      append: append,
+  toast(options: Toast): void {
+    // Use a shorter name for `this.$createElement`
+    const h = this.vm.$createElement;
+    // Create a ID with a incremented count
+    const id = `my-toast-${this.toastCount++}`;
+    const $title = h("div", { class: ["mr-2"] }, [
+      h("strong", { class: "mr-2" }, options.title),
+    ]);
+
+    const $content = h("div", {}, [options.message]);
+    const $openButton = h(
+      "b-button",
+      {
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            if (options.clickCallback) options.clickCallback();
+          },
+        },
+      },
+      "Open"
+    );
+
+    // Create the custom close button
+    const $closeButton = h(
+      "b-button",
+      {
+        class: "ml-2",
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            if (options.closeCallback) options.closeCallback();
+          },
+        },
+      },
+      "Close"
+    ); // Create the custom close button
+
+    return this.vm.$bvToast.toast([$content, $openButton, $closeButton], {
+      id: id,
+      title: $title,
+      toaster: options.placement,
+      variant: options.variant,
+      autoHideDelay: options.hideDelay ?? 1000,
+      append: options.append,
       solid: true,
     });
   }
