@@ -1,0 +1,13 @@
+/*
+    import this if you want to click the whole title and content for toast
+*/
+
+.xhelper-custom-toast-title strong {
+  margin: -0.25em -0.75em;
+  padding: 0.25em 0.75em;
+}
+
+.xhelper-custom-toast-content {
+  margin: -1em;
+  padding: 1em;
+}

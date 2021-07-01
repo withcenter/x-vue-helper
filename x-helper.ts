@@ -86,7 +86,8 @@ export class XHelper {
     const $title = h(
       "div",
       {
-        class: "d-flex justify-content-between w-100",
+        class:
+          "xhelper-custom-toast-title d-flex justify-content-between w-100",
       },
       [
         h(
@@ -121,7 +122,7 @@ export class XHelper {
     const $content = h(
       "div",
       {
-        class: ["w-100 pointer"],
+        class: ["xhelper-custom-toast-content w-100 pointer"],
         on: {
           click: () => {
             this.vm.$bvToast.hide(id);
@@ -141,7 +142,7 @@ export class XHelper {
       append: options.append,
       solid: true,
       noCloseButton: true,
-      // noAutoHide: true,
+      noAutoHide: true,
     });
   }
 
