@@ -83,14 +83,45 @@ export class XHelper {
     const h = this.vm.$createElement;
     // Create a ID with a incremented count
     const id = `my-toast-${this.toastCount++}`;
-    const $title = h("div", { class: ["mr-2"] }, [
-      h("strong", { class: "mr-2" }, options.title),
-    ]);
-
-    const $content = h("div", {}, [options.message]);
-    const $openButton = h(
-      "b-button",
+    const $title = h(
+      "div",
       {
+        class: "d-flex justify-content-between w-100",
+      },
+      [
+        h(
+          "strong",
+          {
+            class: "w-100 pt-1 pointer",
+            on: {
+              click: () => {
+                this.vm.$bvToast.hide(id);
+                if (options.clickCallback) options.clickCallback();
+              },
+            },
+          },
+          options.title
+        ),
+        h(
+          "button",
+          {
+            class: "close pl-2",
+            on: {
+              click: () => {
+                this.vm.$bvToast.hide(id);
+                if (options.closeCallback) options.closeCallback();
+              },
+            },
+          },
+          "×"
+        ),
+      ]
+    );
+
+    const $content = h(
+      "div",
+      {
+        class: ["w-100 pointer"],
         on: {
           click: () => {
             this.vm.$bvToast.hide(id);
@@ -98,33 +129,26 @@ export class XHelper {
           },
         },
       },
-      "Open"
+      [options.message]
     );
 
-    // Create the custom close button
-    const $closeButton = h(
-      "b-button",
+    return this.vm.$bvToast.toast(
+      [
+        $content,
+        //  $openButton, $closeButton
+      ],
       {
-        class: "ml-2",
-        on: {
-          click: () => {
-            this.vm.$bvToast.hide(id);
-            if (options.closeCallback) options.closeCallback();
-          },
-        },
-      },
-      "Close"
-    ); // Create the custom close button
-
-    return this.vm.$bvToast.toast([$content, $openButton, $closeButton], {
-      id: id,
-      title: $title,
-      toaster: options.placement,
-      variant: options.variant,
-      autoHideDelay: options.hideDelay ?? 1000,
-      append: options.append,
-      solid: true,
-    });
+        id: id,
+        title: $title,
+        toaster: options.placement,
+        variant: options.variant,
+        autoHideDelay: options.hideDelay ?? 5000,
+        append: options.append,
+        solid: true,
+        noCloseButton: true,
+        // noAutoHide: true,
+      }
+    );
   }
 
   confirmToast(options: ConfirmToast): void {
@@ -167,7 +191,7 @@ export class XHelper {
       title: options.title,
       toaster: options.placement,
       variant: options.variant,
-      autoHideDelay: options.hideDelay ?? 1000,
+      autoHideDelay: options.hideDelay ?? 5000,
       append: options.append,
       solid: true,
     });
