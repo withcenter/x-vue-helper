@@ -132,23 +132,17 @@ export class XHelper {
       [options.message]
     );
 
-    return this.vm.$bvToast.toast(
-      [
-        $content,
-        //  $openButton, $closeButton
-      ],
-      {
-        id: id,
-        title: $title,
-        toaster: options.placement,
-        variant: options.variant,
-        autoHideDelay: options.hideDelay ?? 5000,
-        append: options.append,
-        solid: true,
-        noCloseButton: true,
-        // noAutoHide: true,
-      }
-    );
+    return this.vm.$bvToast.toast([$content], {
+      id: id,
+      title: $title,
+      toaster: options.placement,
+      variant: options.variant,
+      autoHideDelay: options.hideDelay ?? 5000,
+      append: options.append,
+      solid: true,
+      noCloseButton: true,
+      // noAutoHide: true,
+    });
   }
 
   confirmToast(options: ConfirmToast): void {
