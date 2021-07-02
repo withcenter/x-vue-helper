@@ -142,7 +142,7 @@ export class XHelper {
       append: options.append,
       solid: true,
       noCloseButton: true,
-      noAutoHide: true,
+      // noAutoHide: true,
     });
   }
 
