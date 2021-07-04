@@ -86,8 +86,7 @@ export class XHelper {
     const $title = h(
       "div",
       {
-        class:
-          "xhelper-custom-toast-title d-flex justify-content-between w-100",
+        class: "xhelper-custom-toast-title d-flex justify-content-between w-100",
       },
       [
         h(
