@@ -1,4 +1,5 @@
 import router from "@/router";
+import { translate } from "@/x-vue/services/functions";
 import Vue from "vue";
 
 interface ConfirmToast {
@@ -244,12 +245,7 @@ export class XHelper {
   }
 
   tr(code: string): string {
-    return code;
-    // if (!code) return "";
-    // if (!apiStore.texts) return code;
-    // if (!apiStore.texts[code]) return code;
-    // if (!apiStore.texts[code][ApiService.instance.userLanguage]) return code;
-    // return apiStore.texts[code][ApiService.instance.userLanguage];
+    return translate(code);
   }
 
   /**
