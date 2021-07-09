@@ -225,6 +225,11 @@ export class XHelper {
     return confirm(title + " " + content);
   }
   /**
+   * Display alert box
+   *
+   * ! Do not use this method directly.
+   * ! You should use `ComponentService.instance.alert()` that might call this method.
+   *
    * Returns true when the confirm box has closed.
    *
    * Note, use this method from the app.
@@ -244,6 +249,11 @@ export class XHelper {
     });
   }
 
+  /**
+   * @deprecated Use `translate`
+   * @param code ...
+   * @returns ...
+   */
   tr(code: string): string {
     return translate(code);
   }
