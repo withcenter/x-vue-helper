@@ -1,4 +1,5 @@
 import router from "@/router";
+import { PromptToast } from "@/x-vue/services/component.service";
 import { translate } from "@/x-vue/services/functions";
 import Vue from "vue";
 
@@ -246,6 +247,67 @@ export class XHelper {
       okVariant: "success",
       headerClass: "p-2 border-bottom-0",
       footerClass: "p-2 border-top-0",
+    });
+  }
+
+  promptToast(options: PromptToast): void {
+    // Use a shorter name for `this.$createElement`
+    const h = this.vm.$createElement;
+    // Create a ID with a incremented count
+    const id = `my-toast-${this.toastCount++}`;
+
+    const $content = h("input", {
+      class: "w-100",
+      domProps: {
+        value: options.message,
+      },
+      on: {
+        input: (event: any) => {
+          console.log(event);
+          if (!event) return;
+          options.message = event.target.value;
+        },
+      },
+    });
+
+    const $openButton = h(
+      "b-button",
+      {
+        class: "ml-2 btn-sm",
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            options.okCallback(options.message);
+          },
+        },
+      },
+      "Ok"
+    );
+
+    // Create the custom close button
+    const $closeButton = h(
+      "b-button",
+      {
+        class: "ml-2 btn-sm",
+        on: {
+          click: () => {
+            this.vm.$bvToast.hide(id);
+            options.cancelCallback();
+          },
+        },
+      },
+      "Cancel"
+    ); // Create the custom close button
+
+    return this.vm.$bvToast.toast([$content, h("hr"), $openButton, $closeButton], {
+      id: id,
+      title: options.title,
+      toaster: options.placement,
+      variant: options.variant,
+      // autoHideDelay: options.hideDelay ?? 5000,
+      append: options.append,
+      solid: true,
+      noAutoHide: true,
     });
   }
 
