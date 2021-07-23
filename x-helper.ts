@@ -262,6 +262,7 @@ export class XHelper {
         value: options.message,
       },
       on: {
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         input: (event: any) => {
           console.log(event);
           if (!event) return;
