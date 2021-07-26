@@ -293,7 +293,7 @@ export class XHelper {
         on: {
           click: () => {
             this.vm.$bvToast.hide(id);
-            options.cancelCallback();
+            if (options.cancelCallback) options.cancelCallback();
           },
         },
       },
