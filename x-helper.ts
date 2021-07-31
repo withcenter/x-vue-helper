@@ -64,9 +64,9 @@ export class XHelper {
   error(code: string): Promise<void> {
     if (typeof code === "string" && code.indexOf("error_") === 0) {
       // This is a PHP backend erorr
-      return this.alert(this.tr("error"), this.tr(code));
+      return this.alert(translate("error"), translate(code));
     } else {
-      return this.alert(this.tr("error"), "Unknown error: " + code);
+      return this.alert(translate("error"), "Unknown error: " + code);
     }
   }
 
@@ -216,8 +216,8 @@ export class XHelper {
         size: "sm",
         buttonSize: "sm",
         okVariant: "danger",
-        okTitle: this.tr("yes"),
-        cancelTitle: this.tr("no"),
+        okTitle: translate("yes"),
+        cancelTitle: translate("no"),
         footerClass: "p-2",
         hideHeaderClose: false,
         centered: true,
@@ -234,20 +234,36 @@ export class XHelper {
    * Returns true when the confirm box has closed.
    *
    * Note, use this method from the app.
+   * ! Note, it does not display alert box on same content white alert box is open.
    *
    * @param title title
    * @param content content
    * @returns boolean
    */
+  prevAlertContent = "";
   alert(title: string, content: string): Promise<void> {
-    return this.vm.$bvModal.msgBoxOk(content, {
-      title: title,
-      size: "sm",
-      buttonSize: "sm",
-      okVariant: "success",
-      headerClass: "p-2 border-bottom-0",
-      footerClass: "p-2 border-top-0",
-    });
+    if (this.prevAlertContent != content) {
+      console.log("different content; ", content);
+      this.prevAlertContent = content;
+      return (
+        this.vm.$bvModal
+          .msgBoxOk(content, {
+            title: title,
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "success",
+            headerClass: "p-2 border-bottom-0",
+            footerClass: "p-2 border-top-0",
+          })
+          // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+          .then((value: any) => {
+            this.prevAlertContent = "";
+          })
+      );
+    } else {
+      console.log("same content; just return;", content);
+      return Promise.resolve();
+    }
   }
 
   promptToast(options: PromptToast): void {
